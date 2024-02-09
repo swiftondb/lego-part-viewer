@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGO Part Viewer</title>
+    <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+    <div id="app">
+      Message: {{ message }}
+
+      <ul>
+        <li v-for="(item) in output">
+          {{ item.set }}
+
+          <ul>
+            <li v-for="(element) in item.elements">
+              <img :src="element.img" alt="Element {{ element.element_id }}">
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      const { createApp, onMounted, reactive, ref } = Vue
+
+      createApp({
+        setup() {
+          const message = 'Hello!'
+          const output = ref([])
+
+          const load = async json => {
+            for (const set of json) {
+              
+
+              const response = await fetch('https://lego-api-2024.azurewebsites.net/api/lookupElements?element_ids=' + set.elements.join(','))
+              const json = await response.json()
+
+              output.value.push({
+                set: set.set,
+                elements: json.map(x => ({
+                  element_id: x.element_id,
+                  img: x.part.part_img_url,
+                }))
+              })
+            }
+          }
+
+          onMounted(() => {
+            fetch('https://raw.githubusercontent.com/swiftondb/lego-api/master/parts-022024.json')
+              .then(response => response.json())
+              .then(json => load(json))
+          })
+
+          return {
+            message,
+            output
+          }
+        }
+      }).mount('#app')
+    </script>
+</body>
+</html>
