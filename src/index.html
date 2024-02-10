@@ -21,6 +21,9 @@
 </head>
 <body>
     <div id="app" class="p-4 bg-gray-200">
+      <p v-if="loading" class="absolute left-0 top-0 right-0 p-8 text-center text-lg bg-gray-700 text-white">
+        Loading...
+      </p>
       <ul class="space-y-4">
         <li v-for="(set) in output">
           <h2 class="mb-2 text-xl font-bold tracking-wider">{{ set.name }}</h2>
@@ -48,6 +51,7 @@
 
       createApp({
         setup() {
+          const loading = ref(true)
           const output = ref([])
 
           const load = async json => {
@@ -71,11 +75,14 @@
                     : {
                       element_id: id,
                       img: x.element_img_url,
-                      url: x.part.part_url
+                      url: x.part.part_url + x.color.id + '/',
+                      colorId: x.color.id,
                     }
                 })
               })
             }
+
+            loading.value = false
           }
 
           onMounted(() => {
@@ -86,6 +93,7 @@
           })
 
           return {
+            loading,
             output,
           }
         }
