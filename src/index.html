@@ -29,12 +29,14 @@
             <li v-if="set.elements.length === 0">
               No elements added
             </li>
-            <li v-for="(element) in set.elements" class="p-2 bg-white rounded-lg">
-              <template v-if="element.notFound">(Not found)</template>
-              <template v-else>
-                <img :src="element.img" alt="Element {{ element.element_id }}" class="max-w-[200px]">
-              </template>
-              <p class="mt-1 text-center font-mono tracking-wide">{{ element.element_id }}</p>
+            <li v-for="(element) in set.elements">
+              <a :href="element.url" target="_blank" class="block h-full p-2 bg-white rounded-lg hover:scale-110 hover:transition">
+                <template v-if="element.notFound">(Not found)</template>
+                <template v-else>
+                  <img :src="element.img" alt="Element {{ element.element_id }}" class="max-w-[200px]">
+                </template>
+                <p class="mt-1 text-center font-mono tracking-wide">{{ element.element_id }}</p>
+              </a>
             </li>
           </ul>
         </li>
@@ -68,7 +70,8 @@
                     ? { element_id: id, notFound: true }
                     : {
                       element_id: id,
-                      img: x.part.part_img_url,
+                      img: x.element_img_url,
+                      url: x.part.part_url
                     }
                 })
               })
